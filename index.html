@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Horizon Cipla – Employee Self-Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-dark: #1a3a6b;
+    --blue-mid:  #1565c0;
+    --teal:      #00a896;
+    --pink:      #e6007e;
+    --orange:    #f5a623;
+    --bg:        #dceef8;
+    --sidebar-bg:#1a3a6b;
+    --text-dark: #1a2a3a;
+    --card-radius: 12px;
+  }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ─────────── SIDEBAR ─────────── */
+  .sidebar {
+    width: 72px; background: var(--sidebar-bg);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 18px 0 24px;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+  }
+  .sidebar-logo {
+    width: 40px; height: 40px; margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sidebar-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 12px 8px; cursor: pointer; width: 100%;
+    color: rgba(255,255,255,0.6); font-size: 10px;
+    font-family: 'Nunito', sans-serif; font-weight: 600;
+    transition: background .2s; text-align: center;
+  }
+  .sidebar-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .sidebar-item.active { color: #fff; }
+  .sidebar-item .icon-wrap {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+  }
+  .sidebar-item.active .icon-wrap { background: rgba(255,255,255,0.15); }
+  .sidebar-item svg { width: 22px; height: 22px; }
+
+  /* ─────────── LAYOUT ─────────── */
+  .main-wrapper {
+    margin-left: 72px; flex: 1;
+    display: flex; height: 100vh; overflow: hidden;
+  }
+  .content-grid {
+    display: grid; grid-template-columns: 2fr 1fr;
+    flex: 1; height: 100vh; overflow: hidden;
+  }
+
+  /* ─────────── LEFT PANEL ─────────── */
+  .left-panel {
+    padding: 18px 18px 16px;
+    display: flex; flex-direction: column; gap: 14px;
+    height: 100vh; overflow-y: auto; overflow-x: hidden;
+    background: #fff;
+  }
+  .left-panel::-webkit-scrollbar { width: 4px; }
+  .left-panel::-webkit-scrollbar-thumb { background: #b0ccec; border-radius: 4px; }
+
+  /* Search bar — full width, compact */
+  .left-topbar {
+    flex-shrink: 0;
+  }
+  .search-bar-left {
+    width: 100%; background: #fff; border: 1.5px solid #c9dff5;
+    border-radius: 8px; padding: 7px 14px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .search-bar-left input {
+    border: none; outline: none; background: none;
+    font-size: 13px; color: #333; width: 100%;
+    font-family: 'Open Sans', sans-serif;
+  }
+  .search-bar-left input::placeholder { color: #aaa; }
+  .search-bar-left svg { flex-shrink: 0; }
+
+  /* Welcome title */
+  .welcome-heading {
+    font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900;
+    color: var(--blue-mid); flex-shrink: 0; line-height: 1.3;
+  }
+
+  /* ── Quick Action Apps card ── */
+  .qa-card {
+    background: #fff; border-radius: var(--card-radius);
+    padding: 16px 18px; flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,48,135,0.07);
+  }
+  .qa-card-title {
+    font-family: 'Nunito', sans-serif; font-size: 12.5px; font-weight: 900;
+    color: var(--text-dark); margin-bottom: 14px;
+  }
+  .qa-row {
+    display: flex; align-items: flex-start; gap: 0;
+  }
+  .qa-app {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 7px; flex: 1; padding: 0 4px;
+  }
+  .qa-icon {
+    width: 58px; height: 58px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform .2s, box-shadow .2s; flex-shrink: 0;
+  }
+  .qa-icon:hover { transform: translateY(-2px); box-shadow: 0 7px 18px rgba(0,0,0,0.16); }
+  .qa-icon svg { width: 28px; height: 28px; fill: #fff; }
+  .qa-icon.pink { background: linear-gradient(135deg, #f472b6, var(--pink)); }
+
+  .qa-name {
+    font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 800;
+    color: var(--text-dark); text-align: center;
+  }
+  .qa-tags { display: flex; flex-direction: column; gap: 3px; align-items: center; width: 100%; }
+
+  .tag {
+    font-size: 9px; font-weight: 700; padding: 2px 8px;
+    border-radius: 10px; white-space: nowrap;
+    font-family: 'Nunito', sans-serif; cursor: pointer;
+  }
+  .tag.green  { background: #d4edda; color: #155724; }
+  .tag.pink   { background: #fde8f3; color: var(--pink); }
+  .tag.blue   { background: #dbeafe; color: var(--blue-mid); }
+  .tag.gray   { background: #e9ecef; color: #555; }
+  .tag.orange { background: #fef3cd; color: #7d4e00; }
+  .tag.teal   { background: #d0f4f0; color: #006b62; }
+
+  /* vertical divider between apps */
+  .qa-divider {
+    width: 1px; background: #e8f0fb; align-self: stretch; flex-shrink: 0;
+  }
+
+  /* Add button + hint */
+  .qa-add-group {
+    display: flex; align-items: center; gap: 10px; padding-left: 10px; flex-shrink: 0;
+  }
+  .add-circle {
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 2px dashed #b0c8e8; background: #f0f6fd;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #aac0e0; font-size: 26px; line-height: 1;
+    transition: border-color .2s, color .2s; flex-shrink: 0;
+  }
+  .add-circle:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+  .add-hint-box {
+    background: #fffbf0; border: 1px solid #ffe082; border-radius: 10px;
+    padding: 9px 12px; font-size: 10px; color: #666; line-height: 1.5;
+    max-width: 130px; text-align: center;
+  }
+
+  /* ── Lower 3-col section ── */
+  .lower-row {
+    display: grid; grid-template-columns: 1fr 2fr 1fr;
+    gap: 12px; flex-shrink: 0;
+  }
+  .lower-card {
+    background: #fff; border-radius: var(--card-radius);
+    padding: 14px 14px; box-shadow: 0 2px 10px rgba(0,48,135,0.07);
+  }
+  .lower-card-title {
+    font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 900;
+    color: var(--text-dark); margin-bottom: 14px;
+  }
+
+  /* Growth Apps — single app column */
+  .growth-app {
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+  }
+  .app-icon-circle {
+    width: 54px; height: 54px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+  }
+  .app-icon-circle:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.14); }
+  .app-icon-circle svg { width: 26px; height: 26px; fill: #fff; }
+  .app-icon-circle.blue   { background: linear-gradient(135deg, #60a5fa, var(--blue-mid)); }
+  .app-icon-circle.orange { background: linear-gradient(135deg, #fbbf24, var(--orange)); }
+
+  .app-label {
+    font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800;
+    color: var(--text-dark); text-align: center; white-space: nowrap;
+  }
+  .app-tags { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+
+  /* Goals row — 4 apps in a row */
+  .goals-row {
+    display: flex; gap: 6px; justify-content: space-between;
+  }
+  .goal-app {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1;
+  }
+  .goal-icon {
+    width: 50px; height: 50px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+  }
+  .goal-icon:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.14); }
+  .goal-icon svg { width: 24px; height: 24px; fill: #fff; }
+  .goal-label {
+    font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 800;
+    color: var(--text-dark); text-align: center; white-space: nowrap;
+  }
+  .goal-tags { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+
+  /* IT Help — centered single app */
+  .it-app {
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+  }
+
+  /* ── Explore buttons ── */
+  .explore-row {
+    display: flex; gap: 12px; flex-shrink: 0; padding-bottom: 4px;
+  }
+  .btn-explore {
+    padding: 10px 22px; border-radius: 22px;
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+    cursor: pointer; border: none; transition: background .2s;
+  }
+  .btn-explore.primary   { background: var(--blue-dark); color: #fff; }
+  .btn-explore.primary:hover { background: #122d55; }
+  .btn-explore.secondary { background: var(--blue-mid); color: #fff; }
+  .btn-explore.secondary:hover { background: #0d47a1; }
+
+  /* ─────────── RIGHT PANEL ─────────── */
+  .right-panel {
+    background: #f0f5fb;
+    border-left: 1px solid rgba(0,0,0,0.07);
+    display: flex; flex-direction: column;
+    height: 100vh; overflow-y: auto; overflow-x: hidden;
+  }
+  .right-panel::-webkit-scrollbar { width: 4px; }
+  .right-panel::-webkit-scrollbar-thumb { background: #b0ccec; border-radius: 4px; }
+
+  /* HR Updates title */
+  .hr-section-title {
+    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 900;
+    color: var(--text-dark); padding: 14px 16px 10px;
+    flex-shrink: 0;
+  }
+
+  /* ── HR Image Carousel — card-sized ── */
+  .hr-carousel-wrap {
+    position: relative;
+    margin: 0 14px 14px;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 260px;
+    flex-shrink: 0;
+    box-shadow: 0 3px 14px rgba(0,48,135,0.12);
+  }
+  .hr-track {
+    display: flex; height: 100%;
+    transition: transform 0.6s cubic-bezier(.77,0,.18,1);
+    will-change: transform;
+  }
+  .hr-slide {
+    min-width: 100%; height: 100%; flex-shrink: 0;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+  }
+  .hr-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.25); backdrop-filter: blur(4px);
+    border: none; color: #fff;
+    width: 28px; height: 28px; border-radius: 50%;
+    font-size: 18px; cursor: pointer; z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s; padding: 0; line-height: 1;
+  }
+  .hr-btn:hover { background: rgba(0,0,0,0.5); }
+  .hr-btn.prev { left: 8px; }
+  .hr-btn.next { right: 8px; }
+  .hr-dots {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; z-index: 5;
+  }
+  .hr-dot {
+    width: 6px; height: 6px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.5);
+    transition: background .3s, transform .3s;
+  }
+  .hr-dot.active { background: #fff; transform: scale(1.35); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1000px) {
+    .content-grid { grid-template-columns: 1fr; height: auto; overflow: visible; }
+    .main-wrapper  { height: auto; overflow: visible; }
+    body           { height: auto; overflow: auto; }
+    .left-panel    { height: auto; overflow: visible; }
+    .right-panel   { height: auto; border-left: none; border-top: 2px solid rgba(0,0,0,0.06); }
+    .lower-row     { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .main-wrapper { margin-left: 0; }
+    .sidebar { display: none; }
+    .lower-row { grid-template-columns: 1fr; }
+    .goals-row { flex-wrap: wrap; justify-content: center; }
+    .explore-row { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-item active">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    Home
+  </div>
+  <div class="sidebar-item" style="margin-top:8px;">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </div>
+    Employee<br>Self-Service
+  </div>
+  <div class="sidebar-item" style="margin-top:8px;">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+    </div>
+    Region<br>India
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main-wrapper">
+  <div class="content-grid">
+
+    <!-- ════════ LEFT PANEL ════════ -->
+    <div class="left-panel">
+
+      <!-- Search bar -->
+      <div class="left-topbar">
+        <div class="search-bar-left">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search for payslips, leaves, expenses…">
+        </div>
+      </div>
+
+      <!-- Welcome heading -->
+      <div class="welcome-heading">Hey, Welcome to My Employee Self-Service</div>
+
+      <!-- Quick Action Apps -->
+      <div class="qa-card">
+        <div class="qa-card-title">My Quick Action Apps</div>
+        <div class="qa-row">
+
+          <!-- Mi Pay -->
+          <div class="qa-app">
+            <div class="qa-icon pink">
+              <svg viewBox="0 0 24 24"><path d="M12 1C6.48 1 2 5.48 2 11s4.48 10 10 10 10-4.48 10-10S17.52 1 12 1zm1 15v1h-2v-1H9v-2h4v-1h-3a1 1 0 01-1-1V9a1 1 0 011-1h1V7h2v1h2v2h-4v1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1z"/></svg>
+            </div>
+            <span class="qa-name">Mi Pay</span>
+            <div class="qa-tags">
+              <span class="tag green">Salary</span>
+              <span class="tag green">Loan to TR</span>
+              <span class="tag pink">IT Declaration</span>
+              <span class="tag blue">Offcycle</span>
+              <span class="tag gray">EPF</span>
+            </div>
+          </div>
+
+          <div class="qa-divider"></div>
+
+          <!-- Mi Time -->
+          <div class="qa-app">
+            <div class="qa-icon pink">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            </div>
+            <span class="qa-name">Mi Time</span>
+            <div class="qa-tags">
+              <span class="tag green">Leaves</span>
+              <span class="tag pink">Attendance</span>
+              <span class="tag blue">Holidays</span>
+            </div>
+          </div>
+
+          <div class="qa-divider"></div>
+
+          <!-- Mi Expenses -->
+          <div class="qa-app">
+            <div class="qa-icon pink">
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-8 0v2"/><line x1="12" y1="12" x2="12" y2="16" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="#fff"/></svg>
+            </div>
+            <span class="qa-name">Mi Expenses</span>
+            <div class="qa-tags">
+              <span class="tag blue">Reimbursements</span>
+              <span class="tag pink">Allowances</span>
+            </div>
+          </div>
+
+          <div class="qa-divider"></div>
+
+          <!-- Mi Benefits -->
+          <div class="qa-app">
+            <div class="qa-icon pink">
+              <svg viewBox="0 0 24 24"><path d="M12 21C12 21 3 13.5 3 8a5 5 0 019-3 5 5 0 019 3c0 5.5-9 13-9 13z"/></svg>
+            </div>
+            <span class="qa-name">Mi Benefits</span>
+            <div class="qa-tags">
+              <span class="tag blue">Insurance</span>
+              <span class="tag green">E-Cards</span>
+              <span class="tag teal">Hospital Network</span>
+              <span class="tag orange">New Claim &amp; Tracking</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Lower 3-col: Growth | Goals | IT Help -->
+      <div class="lower-row">
+
+        <!-- Growth Apps -->
+        <div class="lower-card">
+          <div class="lower-card-title">Growth Apps</div>
+          <div class="growth-app">
+            <div class="app-icon-circle blue">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <span class="app-label">People Analytics</span>
+            <div class="app-tags">
+              <span class="tag blue">Budget Planning</span>
+              <span class="tag pink">Manpower Planning</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goals, Performance, Learning Apps -->
+        <div class="lower-card">
+          <div class="lower-card-title">Goals, Performance, Learning Apps</div>
+          <div class="goals-row">
+            <div class="goal-app">
+              <div class="goal-icon" style="background:linear-gradient(135deg,#60a5fa,#1565c0);">
+                <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <span class="goal-label">Mi DNA Goals</span>
+              <div class="goal-tags">
+                <span class="tag blue">Budget Planning</span>
+                <span class="tag pink">Manpower Planning</span>
+              </div>
+            </div>
+            <div class="goal-app">
+              <div class="goal-icon" style="background:linear-gradient(135deg,#60a5fa,#1565c0);">
+                <svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" fill="none"/></svg>
+              </div>
+              <span class="goal-label">Mi Performance</span>
+              <div class="goal-tags">
+                <span class="tag blue">Budget Planning</span>
+                <span class="tag pink">Manpower Planning</span>
+              </div>
+            </div>
+            <div class="goal-app">
+              <div class="goal-icon" style="background:linear-gradient(135deg,#60a5fa,#1565c0);">
+                <svg viewBox="0 0 24 24" fill="#fff"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+              </div>
+              <span class="goal-label">Mi Learning</span>
+              <div class="goal-tags">
+                <span class="tag blue">Budget Planning</span>
+                <span class="tag pink">Manpower Planning</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IT Help App -->
+        <div class="lower-card">
+          <div class="lower-card-title">IT Help App</div>
+          <div class="it-app">
+            <div class="app-icon-circle orange">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </div>
+            <span class="app-label">Mi IT HelpDesk</span>
+            <div class="app-tags">
+              <span class="tag orange">App Permissions</span>
+              <span class="tag green">New/Return Devices</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end lower-row -->
+
+      <!-- Explore buttons -->
+      <div class="explore-row">
+        <button class="btn-explore primary">Explore all Apps &nbsp;›</button>
+        <button class="btn-explore secondary">Explore My Department Apps &nbsp;›</button>
+      </div>
+
+    </div><!-- end left-panel -->
+
+    <!-- ════════ RIGHT PANEL — HR Updates Image Carousel ════════ -->
+    <div class="right-panel">
+      <div class="hr-section-title">HR Updates</div>
+      <div class="hr-carousel-wrap">
+        <div class="hr-track" id="hrTrack">
+          <div class="hr-slide" style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/d842886bd60740b4a78a/thumbnailx1.png');"></div>
+          <div class="hr-slide" style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/c24584180e6946ef90e1/thumbnailx2.jpg');"></div>
+          <div class="hr-slide" style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/1367ca3f82494bf49509/thumbnailx3.jpg');"></div>
+          <div class="hr-slide" style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/7ed21f8176304f029d3a/thumbnailx4.jpg');"></div>
+                  </div>
+        <button class="hr-btn prev" onclick="moveHR(-1)">&#8249;</button>
+        <button class="hr-btn next" onclick="moveHR(1)">&#8250;</button>
+        <div class="hr-dots" id="hrDots"></div>
+      </div>
+    </div><!-- end right-panel -->
+
+  </div>
+</div>
+
+<script>
+  // ── HR IMAGE CAROUSEL ──
+  const hrSlides = document.querySelectorAll('.hr-slide');
+  const hrTrack  = document.getElementById('hrTrack');
+  const hrDotsEl = document.getElementById('hrDots');
+  let hrCur = 0, hrTimer;
+
+  hrSlides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'hr-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => { hrGoTo(i); hrResetAuto(); });
+    hrDotsEl.appendChild(d);
+  });
+
+  function hrGoTo(idx) {
+    hrCur = (idx + hrSlides.length) % hrSlides.length;
+    hrTrack.style.transform = `translateX(-${hrCur * 100}%)`;
+    document.querySelectorAll('.hr-dot').forEach((d, i) => d.classList.toggle('active', i === hrCur));
+  }
+  function moveHR(dir) { hrGoTo(hrCur + dir); hrResetAuto(); }
+  function hrResetAuto() { clearInterval(hrTimer); hrTimer = setInterval(() => hrGoTo(hrCur + 1), 4000); }
+  hrResetAuto();
+
+  // ── Staggered icon load animation ──
+  document.querySelectorAll('.qa-icon, .app-icon-circle, .goal-icon').forEach((el, i) => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      el.style.transition = 'opacity .3s, transform .3s';
+      el.style.opacity = '1'; el.style.transform = 'none';
+    }, 60 + i * 55);
+  });
+</script>
+</body>
+</html>
