@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mi Horizon Cipla – Employee Self-Service</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,7 +15,7 @@
     --pink:      #e6007e;
     --orange:    #f5a623;
     --bg:        #dceef8;
-    --sidebar-bg:#1a3a6b;
+    --sidebar-bg:#005BA6;
     --text-dark: #1a2a3a;
     --card-radius: 12px;
   }
@@ -23,7 +23,7 @@
   html, body { height: 100%; overflow: hidden; }
 
   body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: var(--bg);
     color: var(--text-dark);
     height: 100vh;
@@ -45,8 +45,8 @@
   .sidebar-item {
     display: flex; flex-direction: column; align-items: center;
     gap: 4px; padding: 12px 8px; cursor: pointer; width: 100%;
-    color: rgba(255,255,255,0.6); font-size: 10px;
-    font-family: 'Nunito', sans-serif; font-weight: 600;
+    color: rgba(255,255,255,0.6); font-size: 8px;
+    font-family: 'Poppins', sans-serif; font-weight: 600;
     transition: background .2s; text-align: center;
   }
   .sidebar-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
@@ -58,6 +58,32 @@
   }
   .sidebar-item.active .icon-wrap { background: rgba(255,255,255,0.15); }
   .sidebar-item svg { width: 22px; height: 22px; }
+  .sidebar-item img { width: 22px; height: 22px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.7; }
+  .sidebar-item:hover img, .sidebar-item.active img { opacity: 1; }
+
+  /* ── Region dropdown ── */
+  .region-dropdown {
+    position: absolute; left: 76px; bottom: 10px;
+    background: #005BA6; border-radius: 10px;
+    min-width: 165px; box-shadow: 0 8px 28px rgba(0,0,0,0.32);
+    overflow: hidden; z-index: 200;
+    opacity: 0; pointer-events: none;
+    transform: translateX(-6px);
+    transition: opacity .2s, transform .2s;
+  }
+  .region-dropdown.open { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .region-dropdown-item {
+    padding: 11px 18px; color: rgba(255,255,255,0.75);
+    font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: background .15s, color .15s; text-decoration: none;
+  }
+  .region-dropdown-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .region-dropdown-item.selected { color: #fff; }
+  .region-dropdown-item .check { font-size: 13px; width: 14px; flex-shrink: 0; }
+
+  /* wrapper so dropdown can be positioned relative to region item */
+  .region-wrap { position: relative; width: 100%; }
 
   /* ─────────── LAYOUT ─────────── */
   .main-wrapper {
@@ -92,14 +118,14 @@
   .search-bar-left input {
     border: none; outline: none; background: none;
     font-size: 13px; color: #333; width: 100%;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
   .search-bar-left input::placeholder { color: #aaa; }
   .search-bar-left svg { flex-shrink: 0; }
 
   /* Welcome title */
   .welcome-heading {
-    font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900;
+    font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 900;
     color: var(--blue-mid); flex-shrink: 0; line-height: 1.3;
   }
 
@@ -110,35 +136,36 @@
     box-shadow: 0 2px 10px rgba(0,48,135,0.07);
   }
   .qa-card-title {
-    font-family: 'Nunito', sans-serif; font-size: 12.5px; font-weight: 900;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 900;
     color: var(--text-dark); margin-bottom: 14px;
   }
   .qa-row {
-    display: flex; align-items: flex-start; gap: 0;
+    display: flex; align-items: flex-start; gap: 18px; justify-content: flex-start;
   }
   .qa-app {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 7px; flex: 1; padding: 0 4px;
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 6px; width: 90px; padding: 0;
   }
   .qa-icon {
-    width: 58px; height: 58px; border-radius: 50%;
+    width: 50px; height: 50px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: transform .2s, box-shadow .2s; flex-shrink: 0;
   }
   .qa-icon:hover { transform: translateY(-2px); box-shadow: 0 7px 18px rgba(0,0,0,0.16); }
   .qa-icon svg { width: 28px; height: 28px; fill: #fff; }
-  .qa-icon.pink { background: linear-gradient(135deg, #f472b6, var(--pink)); }
+  .qa-icon.pink { background: none; }
+  .qa-icon img { width: 50px !important; height: 50px !important; border-radius: 50%; object-fit: cover; }
 
   .qa-name {
-    font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 800;
-    color: var(--text-dark); text-align: center;
+    font-family: 'Poppins', sans-serif; font-size: 11.5px; font-weight: 800;
+    color: var(--text-dark); text-align: left;
   }
-  .qa-tags { display: flex; flex-direction: column; gap: 3px; align-items: center; width: 100%; }
+  .qa-tags { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; width: 100%; }
 
   .tag {
     font-size: 9px; font-weight: 700; padding: 2px 8px;
     border-radius: 10px; white-space: nowrap;
-    font-family: 'Nunito', sans-serif; cursor: pointer;
+    font-family: 'Poppins', sans-serif; cursor: pointer;
   }
   .tag.green  { background: #d4edda; color: #155724; }
   .tag.pink   { background: #fde8f3; color: var(--pink); }
@@ -149,7 +176,7 @@
 
   /* vertical divider between apps */
   .qa-divider {
-    width: 1px; background: #e8f0fb; align-self: stretch; flex-shrink: 0;
+    display: none;
   }
 
   /* Add button + hint */
@@ -180,7 +207,7 @@
     padding: 14px 14px; box-shadow: 0 2px 10px rgba(0,48,135,0.07);
   }
   .lower-card-title {
-    font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 900;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 900;
     color: var(--text-dark); margin-bottom: 14px;
   }
 
@@ -199,17 +226,17 @@
   .app-icon-circle.orange { background: linear-gradient(135deg, #fbbf24, var(--orange)); }
 
   .app-label {
-    font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800;
-    color: var(--text-dark); text-align: center; white-space: nowrap;
+    font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800;
+    color: var(--text-dark); text-align: left; white-space: nowrap;
   }
-  .app-tags { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .app-tags { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
 
   /* Goals row — 4 apps in a row */
   .goals-row {
     display: flex; gap: 6px; justify-content: space-between;
   }
   .goal-app {
-    display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px; flex: 1;
   }
   .goal-icon {
     width: 50px; height: 50px; border-radius: 50%;
@@ -219,14 +246,19 @@
   .goal-icon:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.14); }
   .goal-icon svg { width: 24px; height: 24px; fill: #fff; }
   .goal-label {
-    font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 800;
-    color: var(--text-dark); text-align: center; white-space: nowrap;
+    font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 800;
+    color: var(--text-dark); text-align: left; white-space: nowrap;
   }
-  .goal-tags { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .goal-tags { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
 
-  /* IT Help — centered single app */
+  /* IT Help — left-aligned single app */
   .it-app {
-    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+  }
+
+  /* Growth App — left-aligned */
+  .growth-app {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
   }
 
   /* ── Explore buttons ── */
@@ -235,7 +267,7 @@
   }
   .btn-explore {
     padding: 10px 22px; border-radius: 22px;
-    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+    font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 800;
     cursor: pointer; border: none; transition: background .2s;
   }
   .btn-explore.primary   { background: var(--blue-dark); color: #fff; }
@@ -255,7 +287,7 @@
 
   /* HR Updates title */
   .hr-section-title {
-    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 900;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 900;
     color: var(--text-dark); padding: 14px 16px 10px;
     flex-shrink: 0;
   }
@@ -326,24 +358,45 @@
 <nav class="sidebar">
   <div class="sidebar-item active">
     <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/eb975205cf0e4155b28d/Icon.png" alt="Home">
     </div>
     Home
   </div>
   <div class="sidebar-item" style="margin-top:8px;">
     <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <a href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#Cipla-ESS?sap-app-origin-hint=&sap-ui-app-id-hint=12a3af88-57f9-46da-8255-2f4df348b538" target="_blank"><img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/8f7162e124ec47978655/Grid.png" alt="Employee Self-Service"></a>
     </div>
     Employee<br>Self-Service
   </div>
-  <div class="sidebar-item" style="margin-top:8px;">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+  <div class="region-wrap" style="margin-top:8px;">
+    <div class="sidebar-item" id="regionBtn" onclick="toggleRegionDropdown(event)">
+      <div class="icon-wrap">
+        <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/82cec4bb0cc545c39624/Group114.png" alt="Region">
+      </div>
+      Region<br><span id="regionLabel">India</span>
     </div>
-    Region<br>India
+    <div class="region-dropdown" id="regionDropdown">
+      <div class="region-dropdown-item selected">
+        <span class="check">✓</span> India
+      </div>
+      <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/x4FnQ571eHJHvzbSVID024" target="_blank">
+        <span class="check"></span> EMEU
+      </a>
+      <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/WGc33O2txB9Gbr9W4q6024" target="_blank">
+        <span class="check"></span> One Africa
+      </a>
+      <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/Ey6nC87CwetoasFLo0f024" target="_blank">
+        <span class="check"></span> North America
+      </a>
+    </div>
+  </div>
+<div class="sidebar-item" style="margin-top:8px;">
+    <div class="icon-wrap"><a href="https://web.leena.ai/v2/?clientId=6FzCIUNhpefA_Okufvjnf" target="_blank">
+      <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/22052b563e484ad5b4ce/icons.png" alt="MiDas" style="filter:none !important; opacity:1 !important; width:34px; height:34px;"></a>
+    </div>
+    MiDas
   </div>
 </nav>
-
 <!-- ── MAIN ── -->
 <div class="main-wrapper">
   <div class="content-grid">
@@ -369,9 +422,7 @@
 
           <!-- Mi Pay -->
           <div class="qa-app">
-            <div class="qa-icon pink">
-              <svg viewBox="0 0 24 24"><path d="M12 1C6.48 1 2 5.48 2 11s4.48 10 10 10 10-4.48 10-10S17.52 1 12 1zm1 15v1h-2v-1H9v-2h4v-1h-3a1 1 0 01-1-1V9a1 1 0 011-1h1V7h2v1h2v2h-4v1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1z"/></svg>
-            </div>
+            <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/6b745e83efa248c586dd/MiPay.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi Pay">
             <span class="qa-name">Mi Pay</span>
             <div class="qa-tags">
               <span class="tag green">Salary</span>
@@ -386,9 +437,7 @@
 
           <!-- Mi Time -->
           <div class="qa-app">
-            <div class="qa-icon pink">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14" stroke="#fff" stroke-width="2" fill="none"/></svg>
-            </div>
+            <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/10b7b6c550d346669ebf/MiTime.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi Time">
             <span class="qa-name">Mi Time</span>
             <div class="qa-tags">
               <span class="tag green">Leaves</span>
@@ -401,9 +450,7 @@
 
           <!-- Mi Expenses -->
           <div class="qa-app">
-            <div class="qa-icon pink">
-              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-8 0v2"/><line x1="12" y1="12" x2="12" y2="16" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="#fff"/></svg>
-            </div>
+            <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/0ed791ae13454f4890d8/MiExpense.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi Expenses">
             <span class="qa-name">Mi Expenses</span>
             <div class="qa-tags">
               <span class="tag blue">Reimbursements</span>
@@ -415,9 +462,7 @@
 
           <!-- Mi Benefits -->
           <div class="qa-app">
-            <div class="qa-icon pink">
-              <svg viewBox="0 0 24 24"><path d="M12 21C12 21 3 13.5 3 8a5 5 0 019-3 5 5 0 019 3c0 5.5-9 13-9 13z"/></svg>
-            </div>
+            <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/39496fc7620f4b90bb3b/MiBenefits.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi Benefits">
             <span class="qa-name">Mi Benefits</span>
             <div class="qa-tags">
               <span class="tag blue">Insurance</span>
@@ -437,9 +482,7 @@
         <div class="lower-card">
           <div class="lower-card-title">Growth Apps</div>
           <div class="growth-app">
-            <div class="app-icon-circle blue">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-            </div>
+            <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/a65f188bd8c8415a9199/PeopleAnalytics.png" style="width:54px;height:54px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="People Analytics">
             <span class="app-label">People Analytics</span>
             <div class="app-tags">
               <span class="tag blue">Budget Planning</span>
@@ -453,9 +496,7 @@
           <div class="lower-card-title">Goals, Performance, Learning Apps</div>
           <div class="goals-row">
             <div class="goal-app">
-              <div class="goal-icon" style="background:linear-gradient(135deg,#60a5fa,#1565c0);">
-                <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-              </div>
+              <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/97d210556ea74cdfaef6/midnagoals1.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi DNA Goals">
               <span class="goal-label">Mi DNA Goals</span>
               <div class="goal-tags">
                 <span class="tag blue">Budget Planning</span>
@@ -463,9 +504,7 @@
               </div>
             </div>
             <div class="goal-app">
-              <div class="goal-icon" style="background:linear-gradient(135deg,#60a5fa,#1565c0);">
-                <svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" fill="none"/></svg>
-              </div>
+              <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/27ffd88edc0e47cb98f5/Performance.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi Performance">
               <span class="goal-label">Mi Performance</span>
               <div class="goal-tags">
                 <span class="tag blue">Budget Planning</span>
@@ -473,9 +512,7 @@
               </div>
             </div>
             <div class="goal-app">
-              <div class="goal-icon" style="background:linear-gradient(135deg,#60a5fa,#1565c0);">
-                <svg viewBox="0 0 24 24" fill="#fff"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-              </div>
+              <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/db2cd0ac4bc4400d976f/milearningwhite.png" style="width:50px;height:50px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi Learning">
               <span class="goal-label">Mi Learning</span>
               <div class="goal-tags">
                 <span class="tag blue">Budget Planning</span>
@@ -489,9 +526,7 @@
         <div class="lower-card">
           <div class="lower-card-title">IT Help App</div>
           <div class="it-app">
-            <div class="app-icon-circle orange">
-              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            </div>
+            <img src="https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/901d2bc0ff624a0ba93d/Itelpdesk.png" style="width:54px;height:54px;object-fit:contain;cursor:pointer;flex-shrink:0;" alt="Mi IT HelpDesk">
             <span class="app-label">Mi IT HelpDesk</span>
             <div class="app-tags">
               <span class="tag orange">App Permissions</span>
@@ -559,6 +594,16 @@
       el.style.transition = 'opacity .3s, transform .3s';
       el.style.opacity = '1'; el.style.transform = 'none';
     }, 60 + i * 55);
+  });
+  // ── Region dropdown ──
+  function toggleRegionDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('regionDropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('regionBtn').contains(e.target)) {
+      document.getElementById('regionDropdown').classList.remove('open');
+    }
   });
 </script>
 </body>
