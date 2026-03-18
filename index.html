@@ -163,16 +163,42 @@
   .qa-tags { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; width: 100%; }
 
   .tag {
-    font-size: 9px; font-weight: 700; padding: 2px 8px;
-    border-radius: 10px; white-space: nowrap;
-    font-family: 'Poppins', sans-serif; cursor: pointer;
-  }
-  .tag.green  { background: #d4edda; color: #155724; }
-  .tag.pink   { background: #fde8f3; color: var(--pink); }
-  .tag.blue   { background: #dbeafe; color: var(--blue-mid); }
-  .tag.gray   { background: #e9ecef; color: #555; }
-  .tag.orange { background: #fef3cd; color: #7d4e00; }
-  .tag.teal   { background: #d0f4f0; color: #006b62; }
+  font-size: 9px;
+  font-weight: 500;   /* 👈 not bold */
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  color: #fff;
+}
+
+/* 🔴 Quick Action Apps */
+.qa-card .tag {
+  background: #F49AC1 !important;
+}
+
+/* 🔵 Growth + Goals */
+.lower-row .lower-card:nth-child(1) .tag,
+.lower-row .lower-card:nth-child(2) .tag {
+  background: #005BA6 !important;
+}
+
+/* 🟠 IT Help */
+.lower-row .lower-card:nth-child(3) .tag {
+  background: #FBB03F !important;
+}
+
+/* REMOVE or override old colors */
+.tag.green,
+.tag.pink,
+.tag.blue,
+.tag.gray,
+.tag.orange,
+.tag.teal {
+  background: #F49AC1 !important;
+  color: #ffffff !important;
+}
 
   /* vertical divider between apps */
   .qa-divider {
@@ -196,6 +222,15 @@
     padding: 9px 12px; font-size: 10px; color: #666; line-height: 1.5;
     max-width: 130px; text-align: center;
   }
+
+
+  .qa-card {
+  background: #fff;
+  border-radius: var(--card-radius);
+  padding: 16px 18px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0,48,135,0.07);
+}
 
   /* ── Lower 3-col section ── */
   .lower-row {
@@ -426,9 +461,9 @@
             <span class="qa-name">Mi Pay</span>
             <div class="qa-tags">
               <span class="tag green">Salary</span>
-              <span class="tag green">Loan to TR</span>
+              <span class="tag green">Form 16, 12B</span>
               <span class="tag pink">IT Declaration</span>
-              <span class="tag blue">Offcycle</span>
+              <span class="tag blue">Childcare</span>
               <span class="tag gray">EPF</span>
             </div>
           </div>
@@ -563,6 +598,7 @@
 
   </div>
 </div>
+
 
 <script>
   // ── HR IMAGE CAROUSEL ──
