@@ -197,7 +197,7 @@
 /* 🔴 Quick Action Apps */
 .qa-card .tag {
   background: #F49AC1 !important;
-    color: #000000;
+    color: #000;
 }
 
 /* 🔵 Growth + Goals */
@@ -363,23 +363,30 @@
 
   /* ── HR Image Carousel — card-sized ── */
   .hr-carousel-wrap {
-    position: relative;
-    margin: 0 14px 14px;
-    border-radius: 12px;
-    overflow: hidden;
-    height: 260px;
-    flex-shrink: 0;
-    box-shadow: 0 3px 14px rgba(0,48,135,0.12);
-  }
+  position: relative;
+  margin: 0 14px 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 3px 14px rgba(0,48,135,0.12);
+  aspect-ratio: 771 / 504;   /* 🔥 best fix */
+}
   .hr-track {
     display: flex; height: 100%;
     transition: transform 0.6s cubic-bezier(.77,0,.18,1);
     will-change: transform;
   }
   .hr-slide {
-    width: 100%; height: 100%; flex-shrink: 0; display: block;
-    background-size: cover; background-position: center; background-repeat: no-repeat;
-  }
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  display: block;
+
+  background-size: contain;   /* 🔥 change here */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #fff;     /* optional: fills empty space nicely */
+}
   .hr-btn {
     position: absolute; top: 50%; transform: translateY(-50%);
     background: rgba(0,0,0,0.25); backdrop-filter: blur(4px);
@@ -733,7 +740,7 @@
     <div class="hr-track" id="hrTrack">
 
       <a href="https://xujumwkftrdyf6nhorx000.ap10-1.dws.workzone.ondemand.com/embedded_images/show/ZV9QCxmJg4QbQyBuLpa024/thumbnail?max_x=1176&max_y=0" target="_blank" class="hr-slide"
-         style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/d842886bd60740b4a78a/thumbnailx1.png');">
+         style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/a0e826d89dff4363acd5/thumbnaillll.png');">
       </a>
 
       <a href="https://xujumwkftrdyf6nhorx000.ap10-1.dws.workzone.ondemand.com/embedded_images/show/ivplO3ILhshfsVBlaRi024/thumbnail?max_x=1176&max_y=0" target="_blank" class="hr-slide"
@@ -741,7 +748,7 @@
       </a>
 
       <a href="https://xujumwkftrdyf6nhorx000.ap10-1.dws.workzone.ondemand.com/embedded_images/show/oMAUY3T2esxNOZS3SdC024/thumbnail?max_x=1176&max_y=0" target="_blank" class="hr-slide"
-         style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/1367ca3f82494bf49509/thumbnailx3.jpg');">
+         style="background-image:url('https://dmscdn.successfactors.com/e67bac61f74a3e78a20b20c3bff5abd417dd0605df72755f101e24743407f67c/static_content/d1fbfefc24a341f883d8/epfo.png');">
       </a>
 
       <a href="https://xujumwkftrdyf6nhorx000.ap10-1.dws.workzone.ondemand.com/embedded_images/show/bdIyfLQ1utx1Kaddwlh024/thumbnail?max_x=1176&max_y=0" target="_blank" class="hr-slide"
