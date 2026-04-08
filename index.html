@@ -435,6 +435,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  cursor: pointer;
 }
 
 .policy-main {
@@ -515,6 +516,7 @@
 .policy-name {
   font-size: 11px;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .policy-date {
@@ -572,6 +574,12 @@
       <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/WGc33O2txB9Gbr9W4q6024" target="_blank">
         <span class="check"></span> One Africa
       </a>
+      <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/HPbQWT5ON9bPuxXwLle024" target="_blank">
+        <span class="check"></span> Subsidiaries
+      </a>
+      <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/Xuxy9NBhoBEb28U7zMo024" target="_blank">
+        <span class="check"></span> CHL
+      </a>
       <a class="region-dropdown-item" href="https://workzone-prod-w6v2igr4.workzonehr.cfapps.ap10.hana.ondemand.com/site#workzone-home&/home/Ey6nC87CwetoasFLo0f024" target="_blank">
         <span class="check"></span> North America
       </a>
@@ -592,12 +600,42 @@
     <div class="left-panel">
 
       <!-- Search bar -->
-      <div class="left-topbar">
-        <div class="search-bar-left">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Search for payslips, leaves, expenses…">
-        </div>
-      </div>
+<div class="search-bar-left" style="position:relative;">
+  
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.5">
+    <circle cx="11" cy="11" r="8"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+
+  <input id="appSearch" type="text" placeholder="Search for payslips, leaves, expenses…">
+
+  <!-- ❌ CLEAR BUTTON -->
+  <span id="clearSearch" style="
+    position:absolute;
+    right:12px;
+    cursor:pointer;
+    font-size:14px;
+    color:#999;
+    display:none;
+  ">✕</span>
+
+  <!-- 🔽 DROPDOWN -->
+  <div id="searchDropdown" style="
+    position:absolute;
+    top:38px;
+    left:0;
+    right:0;
+    background:#fff;
+    border:1px solid #e0ecf7;
+    border-radius:8px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.1);
+    display:none;
+    z-index:999;
+    max-height:220px;
+    overflow-y:auto;
+  "></div>
+
+</div>
 
       <!-- Welcome heading -->
       <div class="welcome-heading">Hey, Welcome to My Employee Self-Service</div>
@@ -882,6 +920,104 @@
       document.getElementById('regionDropdown').classList.remove('open');
     }
   });
+
+
+  /* ───────── SEARCH FUNCTIONALITY ───────── */
+
+  const searchInput = document.getElementById('appSearch');
+  const dropdown = document.getElementById('searchDropdown');
+  const clearBtn = document.getElementById('clearSearch');
+
+  /* Collect ALL apps */
+  const apps = document.querySelectorAll('.qa-app, .goal-app');
+
+  let appData = [];
+
+  apps.forEach(app => {
+    const name = app.querySelector('.qa-name, .goal-label')?.innerText.toLowerCase() || '';
+    const tags = Array.from(app.querySelectorAll('.tag')).map(t => t.innerText.toLowerCase()).join(' ');
+    const onclick = app.getAttribute('onclick');
+
+    appData.push({
+      name,
+      tags,
+      onclick
+    });
+  });
+
+  /* 🔍 LIVE SEARCH + DROPDOWN */
+  searchInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase().trim();
+
+    dropdown.innerHTML = '';
+    clearBtn.style.display = query ? 'block' : 'none';
+
+    if (!query) {
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    const results = appData.filter(app =>
+      app.name.includes(query) || app.tags.includes(query)
+    );
+
+    if (results.length === 0) {
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    results.slice(0, 6).forEach(app => {
+      const item = document.createElement('div');
+
+      item.style.padding = '8px 12px';
+      item.style.cursor = 'pointer';
+      item.style.fontSize = '12px';
+
+      item.innerHTML = `<strong>${app.name}</strong>`;
+
+      item.onclick = () => {
+        eval(app.onclick);
+      };
+
+      item.onmouseover = () => item.style.background = '#f0f6ff';
+      item.onmouseout = () => item.style.background = '#fff';
+
+      dropdown.appendChild(item);
+    });
+
+    dropdown.style.display = 'block';
+  });
+
+  /* ⌨️ ENTER → OPEN FIRST MATCH */
+  searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      const query = this.value.toLowerCase().trim();
+
+      const match = appData.find(app =>
+        app.name.includes(query) || app.tags.includes(query)
+      );
+
+      if (match) {
+        eval(match.onclick);
+      }
+    }
+  });
+
+  /* ❌ CLEAR BUTTON */
+  clearBtn.addEventListener('click', function () {
+    searchInput.value = '';
+    dropdown.style.display = 'none';
+    this.style.display = 'none';
+    searchInput.focus();
+  });
+
+  /* CLICK OUTSIDE → CLOSE */
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.search-bar-left')) {
+      dropdown.style.display = 'none';
+    }
+  });
+
 </script>
 </body>
 </html>
